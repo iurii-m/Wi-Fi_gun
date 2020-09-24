@@ -12,6 +12,10 @@ The number of corresponding simulations were performed and results were compared
 ## Antenna assembling
 The real design copy the one from the source video as proved to be well working one.
 
+![Antenna_photo](/data/images/original_scheme.jpg)
+
+The antenna assembly.
+
 ![Antenna_photo](/data/photo/ph1.jpg)
 
 The S11 of the antenna was measured on the Rohde & Schwarz VNA.
