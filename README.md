@@ -1,8 +1,11 @@
 # The Wi-Fi Gun Project
 
+This project is devoted to the modeling and constructing the narrow beam antenna for the wi-fi frequency range. 
 The project was inspired by the Kreosan youtube video:
 https://www.youtube.com/watch?v=s-MKhffuPzM&vl=en
 However it is not the origin of the design.
+The realy constructed antenna is the same as published in the video. This antenna was measured on professional equipment. 
+The number of corresponding simulations were performed and results were compared.
 
 ## Antenna assembling
 The real design copy the one from the source video as proved to be well working one.
@@ -20,6 +23,8 @@ Macros construct the antenna design and also define optimisation goal (explained
 All published cst models use the developped macros. Only the geomertic parameters vary for different models.  
 To make macros available in CST put in into:
 [CST folder]/Library/Macros/Construct/[create some folder]/
+
+The macro is the main contribution of this work for the community. 
 
 
 ### The modelling of default parameters(from source video)
