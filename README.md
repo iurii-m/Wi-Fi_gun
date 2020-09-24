@@ -65,7 +65,6 @@ As one can see this variant performs much better then the default on lower chann
 ![S11_Comparison](/data/images/S11_CST_Re_Im_compare_default_optimised_2.375-2.525.png)
 
 ####Improved optimisation for 2.375-2.525 GHz(in comparison with the default) 
-Some improvements in optimiser allowed to find better parameters. S11 characteristic is now smooth and without peaks within the Wi-Fi range.
-The max S11<-18 dB! Directivity remains good.
+Some improvements in optimiser allowed to find better parameters. S11 characteristic is now smooth and without peaks within the Wi-Fi range and also max S11<-18 dB! Directivity remains good.
 
 ![S11_Comparison](/data/images/S11_CST_Re_Im_compare_default_optimised_2.375-2.525_2.png)
