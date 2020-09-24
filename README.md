@@ -11,7 +11,8 @@ The real design copy the one from the source video as proved to be well working 
 
 The S11 of the antenna was measured on the Rohde & Schwarz VNA.
 
-![S11_real_antenna](/data/images/WIFI_Gun_default__parameters_V2.png){:height="50%" width="50%"}
+
+<S11_real_antenna="/data/images/WIFI_Gun_default__parameters_V2.png" height="100">
 
 ## Modeling in CST
 
