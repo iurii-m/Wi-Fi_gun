@@ -1,0 +1,1094 @@
+'#Language "WWB-COM"
+'-----------------------------------------------------------------------------------------------------------------------------
+' Constructs a disk antenna design is inspired by Kreosan youtube channel, however it is not the origin.
+' Drawing the design and setting the optimisation goal - achieving the S11 less then defined value within the frecuency range in the vicinity of the center frequency.
+'
+'-----------------------------------------------------------------------------------------------------------------------------
+' 20.09.2020 Medvedev Iurii https://github.com/iurii-m
+'----------------------------------------------------------------------------------------------------------------------------
+
+Option Explicit
+
+
+Sub Main ()
+
+' Main structure variables
+Dim number_direction_disk		    	As Double ' Number of direction disk
+Dim main_reflector_diameter             As Double
+Dim disk_metallization_thickness    	As Double
+Dim central_pipe_radius        			As Double
+Dim main_line_disks_distance         	As Double
+Dim line_disk_diameter         			As Double
+Dim direction_disks_diameter      		As Double
+Dim line_direction_disk_distance        As Double
+Dim inter_direction_disks_distance      As Double
+
+Dim NameOfUnit		    				As String
+Dim name_number							As Integer
+
+Dim nut_height							As Double
+Dim nut_thickness						As Double
+Dim nut_diameter						As Double
+Dim center_frequency					As Double
+Dim frequency_range						As Double
+Dim S11_target_top						As Double
+Dim port_connection_offset				As Double 'Offset of the port on the main reflection disk
+
+Dim optimisation_range					As Double 'Defines the range of variable changes during the optimisation
+
+Dim low_limit As Double
+Dim top_limit As Double
+
+
+'General variables
+Dim counter                 			As Integer
+Dim current_z_offset					As Double
+
+'Dialog output variable
+Dim cst_result       					As Integer
+
+'Dialog variables'
+Dim cst_NameNumber						As Integer
+Dim cst_number_direction_disk			As Double
+Dim cst_main_reflector_diameter			As Double
+Dim cst_disk_metallization_thickness	As Double
+Dim cst_central_pipe_radius        		As Double
+Dim cst_main_line_disks_distance        As Double
+Dim cst_line_disk_diameter          	As Double
+Dim cst_direction_disks_diameter      	As Double
+Dim cst_line_direction_disk_distance    As Double
+Dim cst_inter_direction_disks_distance  As Double
+
+Dim cst_nut_height						As Double
+Dim cst_nut_thickness					As Double
+Dim cst_nut_diameter					As Double
+Dim cst_center_frequency				As Double
+Dim cst_frequency_range					As Double
+Dim cst_S11_target_top					As Double
+Dim cst_port_connection_offset			As Double
+
+Dim cst_optimisation_range				As Double
+
+'String variables
+Dim scst_NameNumber						As String
+Dim scst_number_direction_disk			As String
+Dim scst_main_reflector_diameter		As String
+Dim scst_disk_metallization_thickness	As String
+Dim scst_central_pipe_radius      		As String
+Dim scst_main_line_disks_distance      	As String
+Dim scst_line_disk_diameter     		As String
+Dim scst_direction_disks_diameter     	As String
+Dim scst_line_direction_disk_distance   As String
+Dim scst_inter_direction_disks_distance As String
+
+Dim scst_nut_height						As String
+Dim scst_nut_thickness					As String
+Dim scst_nut_diameter					As String
+Dim scst_center_frequency				As String
+Dim scst_frequency_range				As String
+Dim scst_S11_target_top					As String
+Dim scst_port_connection_offset			As String
+
+Dim scst_optimisation_range				As String
+
+BeginHide
+
+        Begin Dialog UserDialog 420,441,"Disk antenna",.DialogFunc
+                GroupBox 10,7,400,401,"",.GroupBox1
+
+                        Text 20,21,300,14,"Name Number(non changable)",.NameNumberLabel
+                                TextBox 30,35,150,21,.NameNumber
+
+                        Text 20,63,300,14,"Number of direction disks",.number_direction_diskLabel
+                                TextBox 30,77,150,21,.number_direction_disk
+
+                        Text 20,105,150,14,"Main reflector disk diameter",.main_reflector_diameterLabel
+                                TextBox 30,119,150,21,.main_reflector_diameter
+
+                        Text 220,21,300,14,"Disk metallization thickness",.disk_metallization_thicknessLabel
+                                TextBox 240,35,150,21,.disk_metallization_thickness
+
+                        Text 220,63,150,14,"Central pipe radius",.central_pipe_radiusLabel
+                                TextBox 240,77,150,21,.central_pipe_radius
+
+                         Text 220,105,300,14,"Line/main disks distance",.main_line_disks_distanceLabel
+                                TextBox 240,119,150,21,.main_line_disks_distance
+
+                        Text 20,147,190,14,"Line disk diameter",.line_disk_diameterLabel
+                                TextBox 30,161,150,21,.line_disk_diameter
+
+                        Text 20,189,300,14,"First direction disks diameter",.direction_disks_diameterLabel
+                                TextBox 30,203,150,21,.direction_disks_diameter
+
+                        Text 220,147,180,14,"Line/direction disks distance",.line_direction_disk_distanceLabel
+                                TextBox 240,161,150,21,.line_direction_disk_distance
+
+                        Text 220,189,150,14,"Distance btw direction disks",.inter_direction_disks_distanceLabel
+                                TextBox 240,203,150,21,.inter_direction_disks_distance
+
+
+                        Text 20,231,180,14,"Nut height(cropp to hexa form)",.nut_heightLabel
+                                TextBox 30,245,150,21,.nut_height
+
+                        Text 220,231,150,14,"Nut thickness",.nut_thicknessLabel
+                                TextBox 240,245,150,21,.nut_thickness
+
+                    	Text 20,273,180,14,"Nut diameter",.nut_diameterLabel
+                                TextBox 30,287,150,21,.nut_diameter
+
+                        Text 220,273,150,14,"Center frequency (optimisation)",.center_frequencyLabel
+                                TextBox 240,287,150,21,.center_frequency
+
+                        Text 20,317,180,14,"Frequency Range GHz (optimisation)",.frequency_rangeLabel
+                                TextBox 30,331,150,21,.frequency_range
+
+                        Text 220,317,150,14,"S11 target top",.S11_target_topLabel
+                                TextBox 240,331,150,21,.S11_target_top
+
+                        Text 20,359,180,14,"Port connection offset",.port_connection_offsetLabel
+                                TextBox 30,373,150,21,.port_connection_offset
+
+
+                        Text 220,359,150,14,"Optimisation range",.optimisation_rangeLabel
+                                TextBox 240,373,150,21,.optimisation_range
+
+                OKButton 40,415,120,21
+                CancelButton 255,415,120,21
+
+        End Dialog
+
+        Dim dlg As UserDialog
+		dlg.NameNumber      				= "1"
+		dlg.number_direction_disk       	= "5"
+		dlg.main_reflector_diameter         = "90"
+		dlg.disk_metallization_thickness	= "0.5"
+
+		dlg.central_pipe_radius       		= "2.5"
+		dlg.main_line_disks_distance		= "11"
+		dlg.line_disk_diameter	    		= "68"
+		dlg.direction_disks_diameter  		= "54"
+		dlg.line_direction_disk_distance    = "12"
+		dlg.inter_direction_disks_distance  = "32"
+
+		dlg.nut_height						= "1"
+		dlg.nut_thickness					= "3"
+		dlg.nut_diameter					= "8"
+		dlg.center_frequency				= "2.45"
+		dlg.frequency_range					= "0.2"
+		dlg.S11_target_top					= "-15"
+		dlg.port_connection_offset			= "24"
+
+		dlg.optimisation_range				= "0.1"
+
+
+        cst_result = Dialog(dlg)
+        assign "cst_result"        '  writes e.g. "cst_result = -1/0/1"     into history list
+        If (cst_result = 0) Then Exit All
+
+        scst_NameNumber     				= dlg.NameNumber
+        scst_number_direction_disk     		= dlg.number_direction_disk
+        scst_main_reflector_diameter    	= dlg.main_reflector_diameter
+        scst_disk_metallization_thickness 	= dlg.disk_metallization_thickness
+
+        scst_central_pipe_radius      		= dlg.central_pipe_radius
+		scst_main_line_disks_distance      	= dlg.main_line_disks_distance
+		scst_line_disk_diameter     		= dlg.line_disk_diameter
+		scst_direction_disks_diameter 		= dlg.direction_disks_diameter
+		scst_line_direction_disk_distance   = dlg.line_direction_disk_distance
+		scst_inter_direction_disks_distance = dlg.inter_direction_disks_distance
+
+		scst_nut_height						= dlg.nut_height
+		scst_nut_thickness					= dlg.nut_thickness
+		scst_nut_diameter					= dlg.nut_diameter
+		scst_center_frequency				= dlg.center_frequency
+		scst_frequency_range				= dlg.frequency_range
+		scst_S11_target_top					= dlg.S11_target_top
+		scst_port_connection_offset			= dlg.port_connection_offset
+
+		scst_optimisation_range				= dlg.optimisation_range
+
+
+        assign "scst_NameNumber"
+        assign "scst_number_direction_disk"
+        assign "scst_main_reflector_diameter"
+        assign "scst_disk_metallization_thickness"
+
+        assign "scst_central_pipe_radius"
+        assign "scst_main_line_disks_distance "
+        assign "scst_line_disk_diameter"
+        assign "scst_direction_disks_diameter"
+        assign "scst_line_direction_disk_distance"
+        assign "scst_inter_direction_disks_distance"
+
+        assign "scst_nut_height"
+		assign "scst_nut_thickness"
+		assign "scst_nut_diameter"
+		assign "scst_center_frequency"
+		assign "scst_frequency_range"
+		assign "scst_S11_target_top"
+		assign "scst_port_connection_offset"
+
+		assign "scst_optimisation_range"
+
+EndHide
+
+If (cst_result =0) Then Exit All   ' if cancel/help is clicked, exit all
+
+cst_NameNumber        				= Evaluate( scst_NameNumber)
+cst_number_direction_disk        	= Evaluate( scst_number_direction_disk)
+cst_main_reflector_diameter         = Evaluate( scst_main_reflector_diameter)
+cst_disk_metallization_thickness	= Evaluate( scst_disk_metallization_thickness)
+
+cst_central_pipe_radius        	  	= Evaluate( scst_central_pipe_radius)
+cst_main_line_disks_distance        = Evaluate( scst_main_line_disks_distance)
+cst_line_disk_diameter        		= Evaluate( scst_line_disk_diameter)
+cst_direction_disks_diameter    	= Evaluate( scst_direction_disks_diameter)
+cst_line_direction_disk_distance    = Evaluate( scst_line_direction_disk_distance)
+cst_inter_direction_disks_distance  = Evaluate( scst_inter_direction_disks_distance)
+
+cst_nut_height        	  			= Evaluate( scst_nut_height)
+cst_nut_thickness        	  		= Evaluate( scst_nut_thickness)
+cst_nut_diameter        	  		= Evaluate( scst_nut_diameter)
+cst_center_frequency        	  	= Evaluate( scst_center_frequency)
+cst_frequency_range        	  		= Evaluate( scst_frequency_range)
+cst_S11_target_top        	  		= Evaluate( scst_S11_target_top)
+cst_port_connection_offset        	= Evaluate( scst_port_connection_offset)
+
+cst_optimisation_range       		= Evaluate( scst_optimisation_range)
+
+
+' Wrap the dialog variables'
+
+'Name number is required for modification the variables name - to distinguish different executed macroses
+name_number = cst_NameNumber
+NameOfUnit = "Disk_Antenna_"+CStr(name_number)+"_"
+
+'MakeSureParameterExists NameOfUnit+"num", name_number
+'SetParameterDescription NameOfUnit+"num", "Avoid Id and Name conflict of probes"
+
+MakeSureParameterExists NameOfUnit+"number_direction_disk", cst_number_direction_disk
+SetParameterDescription NameOfUnit+"number_direction_disk", "Number of direction disks"
+
+MakeSureParameterExists NameOfUnit+"main_reflector_diameter", cst_main_reflector_diameter
+SetParameterDescription NameOfUnit+"main_reflector_diameter", "shortest dipole len"
+
+MakeSureParameterExists NameOfUnit+"disk_metallization_thickness", cst_disk_metallization_thickness
+SetParameterDescription NameOfUnit+"disk_metallization_thickness", "Disks thickness"
+
+MakeSureParameterExists NameOfUnit+"central_pipe_radius", cst_central_pipe_radius
+SetParameterDescription NameOfUnit+"central_pipe_radius", "central_pipe_radius"
+
+MakeSureParameterExists NameOfUnit+"main_line_disks_distance", cst_main_line_disks_distance
+SetParameterDescription NameOfUnit+"main_line_disks_distance", "main_line_disks_distance"
+
+MakeSureParameterExists NameOfUnit+"line_disk_diameter", cst_line_disk_diameter
+SetParameterDescription NameOfUnit+"line_disk_diameter", "line_disk_diameter"
+
+
+MakeSureParameterExists NameOfUnit+"line_direction_disk_distance", cst_line_direction_disk_distance
+SetParameterDescription NameOfUnit+"line_direction_disk_distance", "line_direction_disk_distance"
+
+
+MakeSureParameterExists NameOfUnit+"direction_disks_diameter_"+CStr(1), cst_direction_disks_diameter
+SetParameterDescription NameOfUnit+"direction_disks_diameter_"+CStr(1), "direction_disks_diameter"
+
+MakeSureParameterExists NameOfUnit+"inter_direction_disks_distance_"+CStr(1), cst_inter_direction_disks_distance
+SetParameterDescription NameOfUnit+"inter_direction_disks_distance_"+CStr(1), "inter_direction_disks_distance"
+
+
+number_direction_disk  		 	= Evaluate( NameOfUnit+"number_direction_disk")
+
+' creating parameters for direction disks
+If number_direction_disk > 1 Then
+	For counter = 2 To number_direction_disk
+		MakeSureParameterExists NameOfUnit+"direction_disks_diameter_"+CStr(counter), NameOfUnit+"direction_disks_diameter_"+CStr(counter-1)
+		SetParameterDescription NameOfUnit+"direction_disks_diameter_"+CStr(counter), "direction_disks_diameter"
+	Next counter
+End If
+
+If number_direction_disk > 2 Then
+	For counter = 2 To number_direction_disk-1
+		MakeSureParameterExists NameOfUnit+"inter_direction_disks_distance_"+CStr(counter), NameOfUnit+"inter_direction_disks_distance_"+CStr(counter-1)
+		SetParameterDescription NameOfUnit+"inter_direction_disks_distance_"+CStr(counter), "inter_direction_disks_distance"
+	Next counter
+End If
+
+
+MakeSureParameterExists NameOfUnit+"nut_height", cst_nut_height
+SetParameterDescription NameOfUnit+"nut_height", "nut_height"
+
+MakeSureParameterExists NameOfUnit+"nut_thickness", cst_nut_thickness
+SetParameterDescription NameOfUnit+"nut_thickness", "nut_thickness"
+
+MakeSureParameterExists NameOfUnit+"nut_diameter", cst_nut_diameter
+SetParameterDescription NameOfUnit+"nut_diameter", "nut_diameter"
+
+MakeSureParameterExists NameOfUnit+"center_frequency", cst_center_frequency
+SetParameterDescription NameOfUnit+"center_frequency", "center_frequency"
+
+MakeSureParameterExists NameOfUnit+"frequency_range", cst_frequency_range
+SetParameterDescription NameOfUnit+"frequency_range", "frequency_range"
+
+MakeSureParameterExists NameOfUnit+"S11_target_top", cst_S11_target_top
+SetParameterDescription NameOfUnit+"S11_target_top", "S11_target_top"
+
+MakeSureParameterExists NameOfUnit+"port_connection_offset", cst_port_connection_offset
+SetParameterDescription NameOfUnit+"port_connection_offset", "port_connection_offset"
+
+
+MakeSureParameterExists NameOfUnit+"optimisation_range", cst_optimisation_range
+SetParameterDescription NameOfUnit+"optimisation_range", "optimisation_range"
+
+
+MakeSureParameterExists NameOfUnit+"connector_outer_diameter", 4
+SetParameterDescription NameOfUnit+"connector_outer_diameter", "connector_outer_diameter"
+
+MakeSureParameterExists NameOfUnit+"connector_inner_diameter", 1.74
+SetParameterDescription NameOfUnit+"connector_inner_diameter", "connector_inner_diameter"
+
+'additional evaluate step from the parameters after their creating (to make macros work properly)
+
+'number_direction_disk  		= Evaluate( NameOfUnit+"number_direction_disk")
+main_reflector_diameter     	= Evaluate( NameOfUnit+"main_reflector_diameter" )
+disk_metallization_thickness 	= Evaluate( NameOfUnit+"disk_metallization_thickness")
+central_pipe_radius        	 	= Evaluate( NameOfUnit+"central_pipe_radius")
+main_line_disks_distance        = Evaluate( NameOfUnit+"main_line_disks_distance")
+line_disk_diameter       		= Evaluate( NameOfUnit+"line_disk_diameter")
+line_direction_disk_distance    = Evaluate( NameOfUnit+"line_direction_disk_distance")
+
+direction_disks_diameter   		= Evaluate( NameOfUnit+"direction_disks_diameter_"+CStr(1))
+inter_direction_disks_distance  = Evaluate( NameOfUnit+"inter_direction_disks_distance_"+CStr(1))
+
+nut_height        	  			= Evaluate( NameOfUnit+"nut_height")
+nut_thickness        	  		= Evaluate( NameOfUnit+"nut_thickness")
+nut_diameter        	  		= Evaluate( NameOfUnit+"nut_diameter")
+center_frequency        	  	= Evaluate( NameOfUnit+"center_frequency")
+frequency_range        	  		= Evaluate( NameOfUnit+"frequency_range")
+S11_target_top        	  		= Evaluate( NameOfUnit+"S11_target_top")
+port_connection_offset        	= Evaluate( NameOfUnit+"port_connection_offset")
+
+optimisation_range       		= Evaluate( NameOfUnit+"optimisation_range")
+
+low_limit = 1.0 - 1*optimisation_range
+top_limit = 1.0 + 1*optimisation_range
+
+'------------Drawing the stricture-----------------
+
+Component.New "Antenna_Structure_"+CStr(name_number)
+
+With Cylinder
+     .Reset
+     .Name "Main_disk"
+     .Component "Antenna_Structure_"+CStr(name_number)
+     .Material "PEC"
+     .OuterRadius main_reflector_diameter/2
+     .InnerRadius "0"
+     .Axis "z"
+     .Zrange "-Disk_Antenna_1_disk_metallization_thickness/2", "Disk_Antenna_1_disk_metallization_thickness/2"
+     .Xcenter "0"
+     .Ycenter "0"
+     .Segments "0"
+     .Create
+End With
+
+With Cylinder
+     .Reset
+     .Name "Line_disk"
+     .Component "Antenna_Structure_"+CStr(name_number)
+     .Material "PEC"
+     .OuterRadius line_disk_diameter/2
+     .InnerRadius "0"
+     .Axis "z"
+     .Zrange main_line_disks_distance-disk_metallization_thickness/2, main_line_disks_distance+disk_metallization_thickness/2
+     .Xcenter "0"
+     .Ycenter "0"
+     .Segments "0"
+     .Create
+End With
+
+' drawing direction disks
+current_z_offset = main_line_disks_distance+line_direction_disk_distance
+For counter = 1 To number_direction_disk
+	With Cylinder
+	     .Reset
+	     .Name "Direction_disk_"+CStr(counter)
+	     .Component "Antenna_Structure_"+CStr(name_number)
+	     .Material "PEC"
+	     .OuterRadius Evaluate( NameOfUnit+"direction_disks_diameter_"+CStr(counter))/2
+	     .InnerRadius "0"
+	     .Axis "z"
+	     .Zrange current_z_offset-disk_metallization_thickness/2, current_z_offset+disk_metallization_thickness/2
+	     .Xcenter "0"
+	     .Ycenter "0"
+	     .Segments "0"
+	     .Create
+	End With
+
+	If counter < number_direction_disk Then
+		current_z_offset = current_z_offset + Evaluate( NameOfUnit+"inter_direction_disks_distance_"+CStr(counter))
+	End If
+Next counter
+
+Solid.Add "Antenna_Structure_"+CStr(name_number)+":Main_disk", "Antenna_Structure_"+CStr(name_number)+":Line_disk"
+
+
+For counter = 1 To number_direction_disk
+	Solid.Add "Antenna_Structure_"+CStr(name_number)+":Main_disk", "Antenna_Structure_"+CStr(name_number)+":Direction_disk_"+CStr(counter)
+Next counter
+
+'central pipe
+
+With Cylinder
+     .Reset
+     .Name "Central_pipe"
+     .Component "Antenna_Structure_"+CStr(name_number)
+     .Material "PEC"
+     .OuterRadius central_pipe_radius/2
+     .InnerRadius "0"
+     .Axis "z"
+     .Zrange 0, current_z_offset
+     .Xcenter "0"
+     .Ycenter "0"
+     .Segments "0"
+     .Create
+End With
+
+
+'Vacuum cylinder
+'With Cylinder
+'     .Reset
+'     .Name "vacuum_connector"
+'     .Component "Antenna_Structure_"+CStr(name_number)
+'     .Material "Vacuum"
+'     .OuterRadius Evaluate(NameOfUnit+"connector_outer_diameter")/2
+'     .InnerRadius Evaluate(NameOfUnit+"connector_inner_diameter")/2
+'     .Axis "z"
+'     .Zrange -disk_metallization_thickness/2, main_line_disks_distance-disk_metallization_thickness/2
+'     .Xcenter "0"
+'     .Ycenter port_connection_offset
+'     .Segments "0"
+'     .Create
+'End With
+
+'Vacuum cylinder to subtrack
+With Cylinder
+     .Reset
+     .Name "vacuum_connector_subtrack"
+     .Component "Antenna_Structure_"+CStr(name_number)
+     .Material "Vacuum"
+     .OuterRadius Evaluate(NameOfUnit+"connector_outer_diameter")/2
+     .InnerRadius 0
+     .Axis "z"
+     .Zrange -disk_metallization_thickness/2, main_line_disks_distance-disk_metallization_thickness/2
+     .Xcenter "0"
+     .Ycenter port_connection_offset
+     .Segments "0"
+     .Create
+End With
+
+'Vacuum cylinder to subtrack
+With Cylinder
+     .Reset
+     .Name "connector_pipe"
+     .Component "Antenna_Structure_"+CStr(name_number)
+     .Material "PEC"
+     .OuterRadius Evaluate(NameOfUnit+"connector_inner_diameter")/2
+     .InnerRadius 0
+     .Axis "z"
+     .Zrange -disk_metallization_thickness/2, main_line_disks_distance+disk_metallization_thickness/2
+     .Xcenter "0"
+     .Ycenter port_connection_offset
+     .Segments "0"
+     .Create
+End With
+
+Solid.Subtract "Antenna_Structure_"+CStr(name_number)+":Main_disk", "Antenna_Structure_"+CStr(name_number)+":vacuum_connector_subtrack"
+
+'Drawing Nuts
+
+With Cylinder
+     .Reset
+     .Name "Nut_main"
+     .Component "Antenna_Structure_"+CStr(name_number)
+     .Material "PEC"
+     .OuterRadius nut_diameter/2
+     .InnerRadius 0
+     .Axis "z"
+     .Zrange -disk_metallization_thickness/2, nut_thickness+disk_metallization_thickness/2
+     .Xcenter "0"
+     .Ycenter "0"
+     .Segments "0"
+     .Create
+End With
+
+With Cylinder
+     .Reset
+     .Name "Nut_line"
+     .Component "Antenna_Structure_"+CStr(name_number)
+     .Material "PEC"
+     .OuterRadius nut_diameter/2
+     .InnerRadius 0
+     .Axis "z"
+     .Zrange main_line_disks_distance-nut_thickness-disk_metallization_thickness/2, main_line_disks_distance+nut_thickness+disk_metallization_thickness/2
+     .Xcenter "0"
+     .Ycenter "0"
+     .Segments "0"
+     .Create
+End With
+
+
+'drawing direction disks nuts
+current_z_offset = main_line_disks_distance+line_direction_disk_distance
+For counter = 1 To number_direction_disk
+	With Cylinder
+	     .Reset
+	     .Name "Nut_"+CStr(counter)
+	     .Component "Antenna_Structure_"+CStr(name_number)
+	     .Material "PEC"
+	     .OuterRadius nut_diameter/2
+	     .InnerRadius "0"
+	     .Axis "z"
+	     .Zrange current_z_offset-nut_thickness-disk_metallization_thickness/2, current_z_offset+nut_thickness+disk_metallization_thickness/2
+	     .Xcenter "0"
+	     .Ycenter "0"
+	     .Segments "0"
+	     .Create
+	End With
+
+	If counter < number_direction_disk Then
+		current_z_offset = current_z_offset + Evaluate( NameOfUnit+"inter_direction_disks_distance_"+CStr(counter))
+	End If
+Next counter
+
+
+'combining all nuts together
+Solid.Add "Antenna_Structure_"+CStr(name_number)+":Nut_main", "Antenna_Structure_"+CStr(name_number)+":Nut_line"
+For counter = 1 To number_direction_disk
+	Solid.Add "Antenna_Structure_"+CStr(name_number)+":Nut_main", "Antenna_Structure_"+CStr(name_number)+":Nut_"+CStr(counter)
+Next counter
+
+With Brick
+     .Reset
+     .Name "Nut_cropp"
+     .Component "Antenna_Structure_"+CStr(name_number)
+     .Material "PEC"
+     .Xrange -nut_diameter/2, nut_diameter/2
+     .Yrange nut_diameter/2-nut_height, nut_diameter/2
+     .Zrange -disk_metallization_thickness/2, current_z_offset+nut_thickness+disk_metallization_thickness/2
+     .Create
+End With
+
+With Transform
+     .Reset
+     .Name "Antenna_Structure_"+CStr(name_number)+":Nut_cropp"
+     .Origin "Free"
+     .Center "0", "0", "0"
+     .Angle "0", "0", "60"
+     .MultipleObjects "True"
+     .GroupObjects "True"
+     .Repetitions "5"
+     .MultipleSelection "False"
+     .Destination ""
+     .Material ""
+     .Transform "Shape", "Rotate"
+End With
+
+'finalizing nut
+Solid.Subtract "Antenna_Structure_"+CStr(name_number)+":Nut_main", "Antenna_Structure_"+CStr(name_number)+":Nut_cropp"
+
+
+'adding the structure
+Solid.Add "Antenna_Structure_"+CStr(name_number)+":Main_disk", "Antenna_Structure_"+CStr(name_number)+":Nut_main"
+Solid.Add "Antenna_Structure_"+CStr(name_number)+":Main_disk", "Antenna_Structure_"+CStr(name_number)+":connector_pipe"
+Solid.Add "Antenna_Structure_"+CStr(name_number)+":Main_disk", "Antenna_Structure_"+CStr(name_number)+":Central_pipe"
+
+
+'------------Boundary settings-----------------
+
+With Boundary
+     .Xmin "open"
+     .Xmax "open"
+     .Ymin "open"
+     .Ymax "open"
+     .Zmin "open"
+     .Zmax "open"
+     .Xsymmetry "none"
+     .Ysymmetry "none"
+     .Zsymmetry "none"
+     .ApplyInAllDirections "False"
+End With
+
+'------------Port setting-----------------
+With Port
+     .Reset
+     .PortNumber "1"
+     .Label ""
+     .NumberOfModes "1"
+     .AdjustPolarization "False"
+     .PolarizationAngle "0.0"
+     .ReferencePlaneDistance "0"
+     .TextSize "50"
+     .TextMaxLimit "1"
+     .Coordinates "Free"
+     .Orientation "zmin"
+     .PortOnBound "True"
+     .ClipPickedPortToBound "False"
+     .Xrange -Evaluate(NameOfUnit+"connector_outer_diameter")/2, Evaluate(NameOfUnit+"connector_outer_diameter")/2
+     .Yrange port_connection_offset-Evaluate(NameOfUnit+"connector_outer_diameter")/2, port_connection_offset+Evaluate(NameOfUnit+"connector_outer_diameter")/2
+     .Zrange -disk_metallization_thickness/2, -disk_metallization_thickness/2
+     .XrangeAdd "0.0", "0.0"
+     .YrangeAdd "0.0", "0.0"
+     .ZrangeAdd "0.0", "0.0"
+     .SingleEnded "False"
+     .Create
+End With
+
+'------------Farfield settings-----------------
+
+With Monitor
+     .Reset
+     .Name "farfield (f="+CStr(center_frequency )+")"
+     .Domain "Frequency"
+     .FieldType "Farfield"
+     .Frequency center_frequency
+     .ExportFarfieldSource "False"
+     .UseSubvolume "False"
+     .Coordinates "Structure"
+     .SetSubvolume "-45", "45", "-45", "45", "0", "104"
+     .SetSubvolumeOffset "10", "10", "10", "10", "10", "10"
+     .SetSubvolumeOffsetType "FractionOfWavelength"
+     .Create
+End With
+
+
+With Monitor
+     .Reset
+     .Name "farfield (f="+CStr(center_frequency-frequency_range/2)+")"
+     .Domain "Frequency"
+     .FieldType "Farfield"
+     .Frequency center_frequency-frequency_range/2
+     .ExportFarfieldSource "False"
+     .UseSubvolume "False"
+     .Coordinates "Structure"
+     .SetSubvolume "-45", "45", "-45", "45", "0", "104"
+     .SetSubvolumeOffset "10", "10", "10", "10", "10", "10"
+     .SetSubvolumeOffsetType "FractionOfWavelength"
+     .Create
+End With
+
+
+With Monitor
+     .Reset
+     .Name "farfield (f="+CStr(center_frequency+frequency_range/2)+")"
+     .Domain "Frequency"
+     .FieldType "Farfield"
+     .Frequency center_frequency+frequency_range/2
+     .ExportFarfieldSource "False"
+     .UseSubvolume "False"
+     .Coordinates "Structure"
+     .SetSubvolume "-45", "45", "-45", "45", "0", "104"
+     .SetSubvolumeOffset "10", "10", "10", "10", "10", "10"
+     .SetSubvolumeOffsetType "FractionOfWavelength"
+     .Create
+End With
+
+
+'------------Solver settings-----------------
+
+Solver.FrequencyRange "0.5", "6"
+
+Mesh.SetCreator "High Frequency"
+
+With FDSolver
+     .Reset
+     .SetMethod "Tetrahedral", "General purpose"
+     .OrderTet "Second"
+     .OrderSrf "First"
+     .Stimulation "All", "All"
+     .ResetExcitationList
+     .AutoNormImpedance "True"
+     .NormingImpedance "50"
+     .ModesOnly "False"
+     .ConsiderPortLossesTet "True"
+     .SetShieldAllPorts "False"
+     .AccuracyHex "1e-6"
+     .AccuracyTet "1e-4"
+     .AccuracySrf "1e-3"
+     .LimitIterations "False"
+     .MaxIterations "0"
+     .SetCalculateExcitationsInParallel "True", "False", ""
+     .StoreAllResults "False"
+     .StoreResultsInCache "False"
+     .UseHelmholtzEquation "True"
+     .LowFrequencyStabilization "True"
+     .Type "Auto"
+     .MeshAdaptionHex "False"
+     .MeshAdaptionTet "True"
+     .AcceleratedRestart "True"
+     .FreqDistAdaptMode "Distributed"
+     .NewIterativeSolver "True"
+     .TDCompatibleMaterials "False"
+     .ExtrudeOpenBC "True"
+     .SetOpenBCTypeHex "Default"
+     .SetOpenBCTypeTet "Default"
+     .AddMonitorSamples "True"
+     .CalcStatBField "False"
+     .CalcPowerLoss "True"
+     .CalcPowerLossPerComponent "False"
+     .StoreSolutionCoefficients "True"
+     .UseDoublePrecision "False"
+     .UseDoublePrecision_ML "True"
+     .MixedOrderSrf "False"
+     .MixedOrderTet "False"
+     .PreconditionerAccuracyIntEq "0.15"
+     .MLFMMAccuracy "Default"
+     .MinMLFMMBoxSize "0.20"
+     .UseCFIEForCPECIntEq "true"
+     .UseFastRCSSweepIntEq "false"
+     .UseSensitivityAnalysis "False"
+     .SetStopSweepIfCriterionMet "True"
+     .SetSweepThreshold "S-Parameters", "0.01"
+     .UseSweepThreshold "S-Parameters", "True"
+     .SetSweepThreshold "Probes", "0.05"
+     .UseSweepThreshold "Probes", "True"
+     .SweepErrorChecks "2"
+     .SweepMinimumSamples "3"
+     .SweepConsiderAll "True"
+     .SweepConsiderReset
+     .SetNumberOfResultDataSamples "1001"
+     .SetResultDataSamplingMode "Automatic"
+     .SweepWeightEvanescent "1.0"
+     .AccuracyROM "1e-4"
+     .AddSampleInterval "", "", "1", "Automatic", "True"
+     .AddSampleInterval "", "", "", "Automatic", "False"
+     .MPIParallelization "False"
+     .UseDistributedComputing "False"
+     .NetworkComputingStrategy "RunRemote"
+     .NetworkComputingJobCount "3"
+     .UseParallelization "True"
+     .MaxCPUs "96"
+     .MaximumNumberOfCPUDevices "2"
+End With
+
+With IESolver
+     .Reset
+     .UseFastFrequencySweep "True"
+     .UseIEGroundPlane "False"
+     .SetRealGroundMaterialName ""
+     .CalcFarFieldInRealGround "False"
+     .RealGroundModelType "Auto"
+     .PreconditionerType "Auto"
+     .ExtendThinWireModelByWireNubs "False"
+End With
+
+With IESolver
+     .SetFMMFFCalcStopLevel "0"
+     .SetFMMFFCalcNumInterpPoints "6"
+     .UseFMMFarfieldCalc "True"
+     .SetCFIEAlpha "0.500000"
+     .LowFrequencyStabilization "False"
+     .LowFrequencyStabilizationML "True"
+     .Multilayer "False"
+     .SetiMoMACC_I "0.0001"
+     .SetiMoMACC_M "0.0001"
+     .DeembedExternalPorts "True"
+     .SetOpenBC_XY "True"
+     .OldRCSSweepDefintion "False"
+     .SetAccuracySetting "Custom"
+     .CalculateSParaforFieldsources "True"
+     .NumberOfModesCMA "3"
+     .StartFrequencyCMA "-1.0"
+     .SetAccuracySettingCMA "Default"
+     .FrequencySamplesCMA "0"
+     .SetMemSettingCMA "Auto"
+End With
+
+
+'------------Mesh properties-----------------
+
+With Mesh
+     .MeshType "Tetrahedral"
+     .SetCreator "High Frequency"
+End With
+With MeshSettings
+     .SetMeshType "Tet"
+     .Set "Version", 1%
+     'MAX CELL - WAVELENGTH REFINEMENT
+     .Set "StepsPerWaveNear", "4"
+     .Set "StepsPerWaveFar", "4"
+     .Set "PhaseErrorNear", "0.02"
+     .Set "PhaseErrorFar", "0.02"
+     .Set "CellsPerWavelengthPolicy", "automatic"
+     'MAX CELL - GEOMETRY REFINEMENT
+     .Set "StepsPerBoxNear", "20"
+     .Set "StepsPerBoxFar", "1"
+     .Set "ModelBoxDescrNear", "maxedge"
+     .Set "ModelBoxDescrFar", "maxedge"
+     'MIN CELL
+     .Set "UseRatioLimit", "0"
+     .Set "RatioLimit", "100"
+     .Set "MinStep", "0"
+     'MESHING METHOD
+     .SetMeshType "Unstr"
+     .Set "Method", "0"
+End With
+With MeshSettings
+     .SetMeshType "Tet"
+     .Set "CurvatureOrder", "1"
+     .Set "CurvatureOrderPolicy", "automatic"
+     .Set "CurvRefinementControl", "NormalTolerance"
+     .Set "NormalTolerance", "22.5"
+     .Set "SrfMeshGradation", "1.5"
+     .Set "SrfMeshOptimization", "1"
+End With
+With MeshSettings
+     .SetMeshType "Unstr"
+     .Set "UseMaterials",  "1"
+     .Set "MoveMesh", "0"
+End With
+With MeshSettings
+     .SetMeshType "Tet"
+     .Set "UseAnisoCurveRefinement", "1"
+     .Set "UseSameSrfAndVolMeshGradation", "1"
+     .Set "VolMeshGradation", "1.5"
+     .Set "VolMeshOptimization", "1"
+End With
+With MeshSettings
+     .SetMeshType "Unstr"
+     .Set "SmallFeatureSize", "0"
+     .Set "CoincidenceTolerance", "1e-006"
+     .Set "SelfIntersectionCheck", "1"
+     .Set "OptimizeForPlanarStructures", "0"
+End With
+With Mesh
+     .SetParallelMesherMode "Tet", "maximum"
+     .SetMaxParallelMesherThreads "Tet", "1"
+End With
+
+
+'------------Seting optimizer parameters-----------------
+
+With Optimizer
+  .SetMinMaxAuto "10"
+  .SetAlwaysStartFromCurrent "True"
+  .ResetParameterList
+  .SelectParameter NameOfUnit+"center_frequency", "False"
+  .SetParameterInit center_frequency
+  .SetParameterMin low_limit*center_frequency
+  .SetParameterMax top_limit*center_frequency
+  .SetParameterAnchors "5"
+
+  .SelectParameter NameOfUnit+"central_pipe_radius", "False"
+  .SetParameterInit central_pipe_radius
+  .SetParameterMin low_limit*central_pipe_radius
+  .SetParameterMax top_limit*central_pipe_radius
+  .SetParameterAnchors "5"
+
+  .SelectParameter NameOfUnit+"connector_inner_diameter", "False"
+  .SetParameterInit Evaluate(NameOfUnit+"connector_inner_diameter")
+  .SetParameterMin low_limit*Evaluate(NameOfUnit+"connector_inner_diameter")
+  .SetParameterMax top_limit*Evaluate(NameOfUnit+"connector_inner_diameter")
+  .SetParameterAnchors "5"
+
+  .SelectParameter NameOfUnit+"connector_outer_diameter", "False"
+  .SetParameterInit Evaluate(NameOfUnit+"connector_outer_diameter")
+  .SetParameterMin low_limit*Evaluate(NameOfUnit+"connector_outer_diameter")
+  .SetParameterMax top_limit*Evaluate(NameOfUnit+"connector_outer_diameter")
+  .SetParameterAnchors "5"
+
+
+' creating optimisation parameters for direction disks
+  .SelectParameter NameOfUnit+"direction_disks_diameter_"+CStr(1), "True"
+  .SetParameterInit Evaluate(NameOfUnit+"direction_disks_diameter_"+CStr(1))
+  .SetParameterMin low_limit*Evaluate(NameOfUnit+"direction_disks_diameter_"+CStr(1))
+  .SetParameterMax top_limit*Evaluate(NameOfUnit+"direction_disks_diameter_"+CStr(1))
+  .SetParameterAnchors "5"
+
+  .SelectParameter NameOfUnit+"inter_direction_disks_distance_"+CStr(1), "True"
+  .SetParameterInit Evaluate(NameOfUnit+"inter_direction_disks_distance_"+CStr(1))
+  .SetParameterMin low_limit*Evaluate(NameOfUnit+"inter_direction_disks_distance_"+CStr(1))
+  .SetParameterMax top_limit*Evaluate(NameOfUnit+"inter_direction_disks_distance_"+CStr(1))
+  .SetParameterAnchors "5"
+
+	If number_direction_disk > 1 Then
+		For counter = 2 To number_direction_disk
+
+			.SelectParameter NameOfUnit+"direction_disks_diameter_"+CStr(counter), "True"
+  			.SetParameterInit Evaluate(NameOfUnit+"direction_disks_diameter_"+CStr(counter))
+  			.SetParameterMin low_limit*Evaluate(NameOfUnit+"direction_disks_diameter_"+CStr(counter))
+  			.SetParameterMax top_limit*Evaluate(NameOfUnit+"direction_disks_diameter_"+CStr(counter))
+  			.SetParameterAnchors "5"
+
+		Next counter
+	End If
+
+	If number_direction_disk > 2 Then
+		For counter = 2 To number_direction_disk-1
+
+			.SelectParameter NameOfUnit+"inter_direction_disks_distance_"+CStr(counter), "True"
+  			.SetParameterInit Evaluate(NameOfUnit+"inter_direction_disks_distance_"+CStr(counter))
+  			.SetParameterMin low_limit*Evaluate(NameOfUnit+"inter_direction_disks_distance_"+CStr(counter))
+  			.SetParameterMax top_limit*Evaluate(NameOfUnit+"inter_direction_disks_distance_"+CStr(counter))
+  			.SetParameterAnchors "5"
+
+		Next counter
+	End If
+
+
+
+  .SelectParameter NameOfUnit+"disk_metallization_thickness", "False"
+  .SetParameterInit disk_metallization_thickness
+  .SetParameterMin low_limit*disk_metallization_thickness
+  .SetParameterMax top_limit*disk_metallization_thickness
+  .SetParameterAnchors "5"
+
+  .SelectParameter NameOfUnit+"frequency_range", "False"
+  .SetParameterInit frequency_range
+  .SetParameterMin low_limit*frequency_range
+  .SetParameterMax top_limit*frequency_range
+  .SetParameterAnchors "5"
+
+  .SelectParameter NameOfUnit+"line_direction_disk_distance", "True"
+  .SetParameterInit line_direction_disk_distance
+  .SetParameterMin low_limit*line_direction_disk_distance
+  .SetParameterMax top_limit*line_direction_disk_distance
+  .SetParameterAnchors "5"
+
+  .SelectParameter NameOfUnit+"line_disk_diameter", "True"
+  .SetParameterInit line_disk_diameter
+  .SetParameterMin low_limit*line_disk_diameter
+  .SetParameterMax top_limit*line_disk_diameter
+  .SetParameterAnchors "5"
+
+  .SelectParameter NameOfUnit+"main_line_disks_distance", "True"
+  .SetParameterInit main_line_disks_distance
+  .SetParameterMin low_limit*main_line_disks_distance
+  .SetParameterMax top_limit*main_line_disks_distance
+  .SetParameterAnchors "5"
+
+  .SelectParameter NameOfUnit+"main_reflector_diameter", "True"
+  .SetParameterInit main_reflector_diameter
+  .SetParameterMin low_limit*main_reflector_diameter
+  .SetParameterMax top_limit*main_reflector_diameter
+  .SetParameterAnchors "5"
+
+  .SelectParameter NameOfUnit+"number_direction_disk", "False"
+  .SetParameterInit number_direction_disk
+  .SetParameterMin low_limit*number_direction_disk
+  .SetParameterMax top_limit*number_direction_disk
+  .SetParameterAnchors "5"
+
+  .SelectParameter NameOfUnit+"nut_diameter", "False"
+  .SetParameterInit nut_diameter
+  .SetParameterMin low_limit*nut_diameter
+  .SetParameterMax top_limit*nut_diameter
+  .SetParameterAnchors "5"
+
+  .SelectParameter NameOfUnit+"nut_height", "False"
+  .SetParameterInit nut_height
+  .SetParameterMin low_limit*nut_height
+  .SetParameterMax top_limit*nut_height
+  .SetParameterAnchors "5"
+
+  .SelectParameter NameOfUnit+"nut_thickness", "False"
+  .SetParameterInit nut_thickness
+  .SetParameterMin low_limit*nut_thickness
+  .SetParameterMax top_limit*nut_thickness
+  .SetParameterAnchors "5"
+
+  .SelectParameter NameOfUnit+"port_connection_offset", "True"
+  .SetParameterInit port_connection_offset
+  .SetParameterMin low_limit*port_connection_offset
+  .SetParameterMax top_limit*port_connection_offset
+  .SetParameterAnchors "5"
+
+
+  .SelectParameter NameOfUnit+"optimisation_range", "False"
+  .SetParameterInit optimisation_range
+  .SetParameterMin low_limit*optimisation_range
+  .SetParameterMax top_limit*optimisation_range
+  .SetParameterAnchors "5"
+
+
+  .SelectParameter NameOfUnit+"S11_target_top", "False"
+  .SetParameterInit S11_target_top
+  .SetParameterMin low_limit*S11_target_top
+  .SetParameterMax top_limit*S11_target_top
+  .SetParameterAnchors "5"
+End With
+
+
+With Optimizer
+  .SetOptimizerType "Trust_Region"
+  .SetSimulationType "Frequency Domain Solver"
+  .SetAccuracy "0.01"
+  .SetNumRefinements "1"
+  .SetGenerationSize "32", "Genetic_Algorithm"
+  .SetGenerationSize "30", "Particle_Swarm"
+  .SetMaxIt "30", "Genetic_Algorithm"
+  .SetMaxIt "15", "Particle_Swarm"
+  .SetMaxEval "3000", "CMAES"
+  .SetUseMaxEval "True", "CMAES"
+  .SetSigma "0.2", "CMAES"
+  .SetSeed "1", "CMAES"
+  .SetSeed "1", "Genetic_Algorithm"
+  .SetSeed "1", "Particle_Swarm"
+  .SetSeed "1", "Nelder_Mead_Simplex"
+  .SetMaxEval "500", "Trust_Region"
+  .SetUseMaxEval "False", "Trust_Region"
+  .SetSigma "0.2", "Trust_Region"
+  .SetDomainAccuracy "0.01", "Trust_Region"
+  .SetFiniteDiff "0", "Trust_Region"
+  .SetMaxEval "250", "Nelder_Mead_Simplex"
+  .SetUseMaxEval "False", "Nelder_Mead_Simplex"
+  .SetUseInterpolation "No_Interpolation", "Genetic_Algorithm"
+  .SetUseInterpolation "No_Interpolation", "Particle_Swarm"
+  .SetInitialDistribution "Latin_Hyper_Cube", "Genetic_Algorithm"
+  .SetInitialDistribution "Latin_Hyper_Cube", "Particle_Swarm"
+  .SetInitialDistribution "Noisy_Latin_Hyper_Cube", "Nelder_Mead_Simplex"
+  .SetUsePreDefPointInInitDistribution "True", "Nelder_Mead_Simplex"
+  .SetUsePreDefPointInInitDistribution "True", "CMAES"
+  .SetGoalFunctionLevel "0.0", "Genetic_Algorithm"
+  .SetGoalFunctionLevel "0.0", "Particle_Swarm"
+  .SetGoalFunctionLevel "0.0", "Nelder_Mead_Simplex"
+  .SetMutaionRate "60", "Genetic_Algorithm"
+  .SetMinSimplexSize "1e-6"
+  .SetGoalSummaryType "Sum_All_Goals"
+  .SetUseDataOfPreviousCalculations "False"
+  .SetDataStorageStrategy "None"
+  .SetOptionMoveMesh "False"
+End With
+
+With Optimizer
+  .AddGoal "1DC Primary Result"
+  .SetGoalOperator "<"
+  .SetGoalTarget S11_target_top
+  .UseSlope "False"
+  .SetGoalTargetMax "0.0"
+  .SetGoalWeight "1.0"
+  .SetGoalNormNew "MaxDiff"
+  .SetGoal1DCResultName "1D Results\S-Parameters\S1,1"
+  .SetGoalScalarType "MagdB20"
+  .SetGoalRange NameOfUnit+"center_frequency"+"-"+NameOfUnit+"frequency_range/2", NameOfUnit+"center_frequency"+"+"+NameOfUnit+"frequency_range/2"
+  .SetGoalRangeType "range"
+End With
+
+
+
+
+End Sub
+
+Function DialogFunc%(Item As String, Action As Integer, Value As Integer)
+	Select Case Action
+	Case 1 ' Dialog box initialization
+	Case 2 ' Value changing or button pressed
+		Select Case Item
+		Case "Help"
+			StartHelp "common_preloadedmacro_Construct_Coils"
+			DialogFunc = True
+		End Select
+	Case 3 ' ComboBox or TextBox Value changed
+	Case 4 ' Focus changed
+	Case 5 ' Idle
+	End Select
+End Function
