@@ -2,7 +2,9 @@
 
 This project is devoted to the modeling and constructing the narrow beam antenna for the wi-fi frequency range. 
 The project was inspired by the Kreosan youtube video:
+
 https://www.youtube.com/watch?v=s-MKhffuPzM&vl=en
+
 However it is not the origin of the design.
 The realy constructed antenna is the same as published in the video. This antenna was measured on professional equipment. 
 The number of corresponding simulations were performed and results were compared.
@@ -46,12 +48,13 @@ The S11 of simulated model was compared with the real measurements. Results on t
 Macros also define optimisation goal - achieving the S11 not greater that the defined value.
 Experiments show that with the good initial settings on a defined frequency, the design can be well optimised in the required vicinity of that frequency.
 
-Optimised for 2.3-2.5 GHz:
+Optimised for 2.3-2.5 GHz (in comparison with the default):
 
-![S11_Comparison](/data/images/S11_CST_Re_Im_2.3-2.5_optimisation.png)
+![S11_Comparison](/data/images/S11_CST_Re_Im_compare_default_optimised_2.3-2.5.png)
 
-Optimised for 2.375-2.525 GHz (Wi-Fi channels range):
+Optimised for 2.375-2.525 GHz(in comparison with the default) in accordance with Wi-Fi channels ranges https://en.wikipedia.org/wiki/List_of_WLAN_channels (including some extra small margin):
+As one can see this variant performs much better then the default on lower channels and S11 is almost flat in the full WI-Fi range.
 
-![S11_Comparison](/data/images/wi-fi_2.4GHz_channel_overlay.jpg)
+![S11_Comparison](/data/images/wi-fi_2.4GHz_channel_overlay.png)
 
-![S11_Comparison](/data/images/S11_CST_Re_Im_2.3-2.5_optimisation.png)
+![S11_Comparison](/data/images/S11_CST_Re_Im_compare_default_optimised_2.375-2.525.png)
