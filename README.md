@@ -52,11 +52,11 @@ The S11 of simulated model was compared with the real measurements. Results on t
 Macros also define optimisation goal - achieving the S11 not greater that the defined value.
 Experiments show that with the good initial settings on a defined frequency, the design can be well optimised in the required vicinity of that frequency.
 
-####Optimised for 2.3-2.5 GHz (in comparison with the default):
+#### Optimised for 2.3-2.5 GHz (in comparison with the default):
 
 ![S11_Comparison](/data/images/S11_CST_Re_Im_compare_default_optimised_2.3-2.5.png)
 
-####Optimised for 2.375-2.525 GHz(in comparison with the default) 
+#### Optimised for 2.375-2.525 GHz(in comparison with the default) 
 In accordance with Wi-Fi channels ranges https://en.wikipedia.org/wiki/List_of_WLAN_channels (including some extra small margin):
 As one can see this variant performs much better then the default on lower channels and S11 is almost flat in the full WI-Fi range.
 
@@ -64,7 +64,7 @@ As one can see this variant performs much better then the default on lower chann
 
 ![S11_Comparison](/data/images/S11_CST_Re_Im_compare_default_optimised_2.375-2.525.png)
 
-####Improved optimisation for 2.375-2.525 GHz(in comparison with the default) 
+#### Improved optimisation for 2.375-2.525 GHz(in comparison with the default) 
 Some improvements in optimiser allowed to find better parameters. S11 characteristic is now smooth and without peaks within the Wi-Fi range and also max S11<-18 dB! Directivity remains good.
 
 ![S11_Comparison](/data/images/S11_CST_Re_Im_compare_default_optimised_2.375-2.525_2.png)
