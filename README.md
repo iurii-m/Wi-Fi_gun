@@ -21,12 +21,23 @@ All published cst models use the developped macros. Only the geomertic parameter
 To make macros available in CST put in into:
 [CST folder]/Library/Macros/Construct/[create some folder]/
 
-###### Comparison of modeling and real antenna
+
+### The modelling of default parameters(from source video)
+
+The S11 of the default antenna model
+![S11_real_antenna](/data/images/S11_CST_Re_Im_default_parameters.png)
+
+
+The farfield of the default antenna demonstrate good directivity
+![S11_real_antenna](/data/images/farfield_default_parameters_2.4.png)
+
+
+### Comparison of modeling and real antenna
 The S11 of simulated model was compared with the real measurements. Results on the frequencies of interest are almost the same. 
 
 ![S11_Comparison](/data/images/Compare_CST_VNA.png)
 
-###### Optimisation
+### Optimisation
 Macros also define optimisation goal - achieving the S11 not greater that the defined value.
 Experiments show that with the good initial settings on a defined frequency, the design can be well optimised in the required vicinity of that frequency.
 
