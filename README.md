@@ -7,12 +7,11 @@ However it is not the origin of the design.
 ## Antenna assembling
 The real design copy the one from the source video as proved to be well working one.
 
-![Antenna_photo](/data/photo/ph1.jpg| heigth=100)
+![Antenna_photo](/data/photo/ph1.jpg)
 
 The S11 of the antenna was measured on the Rohde & Schwarz VNA.
 
-
-<S11_real_antenna="/data/images/WIFI_Gun_default__parameters_V2.png" height="100">
+![S11_real_antenna](/data/images/WIFI_Gun_default__parameters_V2.png)
 
 ## Modeling in CST
 
@@ -25,7 +24,7 @@ To make macros available in CST put in into:
 ###### Comparison of modeling and real antenna
 The S11 of simulated model was compared with the real measurements. Results on the frequencies of interest are almost the same. 
 
-![S11_Comparison](/data/images/Compare_CST_VNA.png){:height="50%" width="50%"}
+![S11_Comparison](/data/images/Compare_CST_VNA.png)
 
 ###### Optimisation
 Macros also define optimisation goal - achieving the S11 not greater that the defined value.
@@ -33,10 +32,10 @@ Experiments show that with the good initial settings on a defined frequency, the
 
 Optimised for 2.3-2.5 GHz:
 
-![S11_Comparison](/data/images/S11_CST_Re_Im_2.3-2.5_optimisation.png) {:height="50%" width="50%"}
+![S11_Comparison](/data/images/S11_CST_Re_Im_2.3-2.5_optimisation.png)
 
 Optimised for 2.375-2.525 GHz (Wi-Fi channels range):
 
 ![S11_Comparison](/data/images/wi-fi_2.4GHz_channel_overlay.jpg)
 
-![S11_Comparison](/data/images/S11_CST_Re_Im_2.3-2.5_optimisation.png){:height="50%" width="50%"}
+![S11_Comparison](/data/images/S11_CST_Re_Im_2.3-2.5_optimisation.png)
