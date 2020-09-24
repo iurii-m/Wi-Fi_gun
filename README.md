@@ -19,7 +19,7 @@ For the convinient modeling and repeatability the design was combined into a mac
 Macros construct the antenna design and also define optimisation goal (explained below).
 All published cst models use the developped macros. Only the geomertic parameters vary for different models.  
 To make macros available in CST put in into:
-<CST folder>/Library/Macros/Construct/<create some folder>/
+[CST folder]/Library/Macros/Construct/[create some folder]/
 
 ###### Comparison of modeling and real antenna
 The S11 of simulated model was compared with the real measurements. Results on the frequencies of interest are almost the same. 
