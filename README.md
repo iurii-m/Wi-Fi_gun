@@ -1,6 +1,6 @@
 # The Wi-Fi Gun Project
 
-This project is devoted to the modeling and constructing the narrow beam antenna for the wi-fi frequency range. 
+This project is devoted to the modeling and constructing the narrow beam antenna for the Wi-Fi frequency range. 
 The project was inspired by the Kreosan youtube video:
 
 https://www.youtube.com/watch?v=s-MKhffuPzM&vl=en
@@ -52,13 +52,20 @@ The S11 of simulated model was compared with the real measurements. Results on t
 Macros also define optimisation goal - achieving the S11 not greater that the defined value.
 Experiments show that with the good initial settings on a defined frequency, the design can be well optimised in the required vicinity of that frequency.
 
-Optimised for 2.3-2.5 GHz (in comparison with the default):
+####Optimised for 2.3-2.5 GHz (in comparison with the default):
 
 ![S11_Comparison](/data/images/S11_CST_Re_Im_compare_default_optimised_2.3-2.5.png)
 
-Optimised for 2.375-2.525 GHz(in comparison with the default) in accordance with Wi-Fi channels ranges https://en.wikipedia.org/wiki/List_of_WLAN_channels (including some extra small margin):
+####Optimised for 2.375-2.525 GHz(in comparison with the default) 
+In accordance with Wi-Fi channels ranges https://en.wikipedia.org/wiki/List_of_WLAN_channels (including some extra small margin):
 As one can see this variant performs much better then the default on lower channels and S11 is almost flat in the full WI-Fi range.
 
 ![S11_Comparison](/data/images/wi-fi_2.4GHz_channel_overlay.png)
 
 ![S11_Comparison](/data/images/S11_CST_Re_Im_compare_default_optimised_2.375-2.525.png)
+
+####Improved optimisation for 2.375-2.525 GHz(in comparison with the default) 
+Some improvements in optimiser allowed to find better parameters. S11 characteristic is now smooth and without peaks within the Wi-Fi range.
+The max S11<-18 dB! Directivity remains good.
+
+![S11_Comparison](/data/images/S11_CST_Re_Im_compare_default_optimised_2.375-2.525_2.png)

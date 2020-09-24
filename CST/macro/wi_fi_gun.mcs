@@ -869,7 +869,7 @@ End With
 '------------Seting optimizer parameters-----------------
 
 With Optimizer
-  .SetMinMaxAuto "10"
+  .SetMinMaxAuto "30"
   .SetAlwaysStartFromCurrent "True"
   .ResetParameterList
   .SelectParameter NameOfUnit+"center_frequency", "False"
@@ -1016,6 +1016,7 @@ With Optimizer
   .SetParameterMax top_limit*S11_target_top
   .SetParameterAnchors "5"
 End With
+
 
 
 With Optimizer

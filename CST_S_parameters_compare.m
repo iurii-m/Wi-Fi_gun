@@ -11,10 +11,10 @@ filefolder = 'data/'
 filename_1 = "S11_CST_Re_Im_default_parameters.txt"
 
 %filename
-filename_2 = "S11_CST_Re_Im_2.3-2.5_optimisation.txt"
+filename_2 = "S11_CST_Re_Im_2.375-2.525_optimisation_2.txt"
 
 %name of plot save filename
-pic_name = "images/S11_CST_Re_Im_compare_default_optimised_2.3-2.5.png"
+pic_name = "images/S11_CST_Re_Im_compare_default_optimised_2.375-2.525_2.png"
 
 %name of plot title
 plot_title = "S-Parameters"
@@ -54,7 +54,7 @@ grid on
 % Set the axis limits
 axis([x_min x_max y_min y_max])
 % Legend
-lgd = legend('S11 default','S11 optimised 2.3-2.5')
+lgd = legend('S11 default','S11 optimised 2.375-2.525.2')
 set(lgd,'Location','best')
 % Add title and axis labels
 title(plot_title)
