@@ -8,10 +8,10 @@
 filefolder = 'data/'
 
 %filename
-filename = "S11_CST_Re_Im_2.3-2.5_optimisation.txt"
+filename = "S11_CST_Re_Im_2.5-2.7_optimisation.txt"
 
 %name of plot save filename
-pic_name = "images/S11_CST_Re_Im_2.3-2.5_optimisation.png"
+pic_name = "images/S11_CST_Re_Im_2.5-2.7_optimisation.png"
 
 %name of plot title
 plot_title = "S-Parameters"

@@ -51,6 +51,7 @@ The S11 of simulated model was compared with the real measurements. Results on t
 ### Optimisation
 Macros also define optimisation goal - achieving the S11 not greater that the defined value.
 Experiments show that with the good initial settings on a defined frequency, the design can be well optimised in the required vicinity of that frequency.
+Results published here have all the dimentions rounded to 0.5 mm and thus are slightly worse that the optimisation result.
 
 #### Optimised for 2.3-2.5 GHz (in comparison with the default):
 
@@ -68,3 +69,10 @@ As one can see this variant performs much better then the default on lower chann
 Some improvements in optimiser allowed to find better parameters. S11 characteristic is now smooth and without peaks within the Wi-Fi range and also max S11<-18 dB! Directivity remains good.
 
 ![S11_Comparison](/data/images/S11_CST_Re_Im_compare_default_optimised_2.375-2.525_2.png)
+
+#### Optimisation for 2.5-2.7 GHz(out Wi-Fi scopes and covers the entire 4G band 7) 
+Achieved in 2 optimisation steps( first with 2.5 GHz center frequency, next with the 2.6 GHz center frequency) from the wi-fi optimized gun as initialization. 
+![S11](/data/images/S11_CST_Re_Im_2.5-2.7_optimisation.png)
+
+#TODO:
+Table with the dimentions.
