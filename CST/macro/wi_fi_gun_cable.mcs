@@ -36,9 +36,10 @@ Dim port_connection_offset				As Double 'Offset of the port on the main reflecti
 
 Dim optimisation_range					As Double 'Defines the range of variable changes during the optimisation
 
-Dim low_limit As Double
-Dim top_limit As Double
+Dim low_limit 							As Double
+Dim top_limit 							As Double
 
+Dim cable_length 						As Double
 
 'General variables
 Dim counter                 			As Integer
@@ -346,6 +347,10 @@ SetParameterDescription NameOfUnit+"connector_outer_diameter", "connector_outer_
 MakeSureParameterExists NameOfUnit+"connector_inner_diameter", 1.74
 SetParameterDescription NameOfUnit+"connector_inner_diameter", "connector_inner_diameter"
 
+
+MakeSureParameterExists NameOfUnit+"cable_length", 50
+SetParameterDescription NameOfUnit+"cable_length", "cable_length"
+
 'additional evaluate step from the parameters after their creating (to make macros work properly)
 
 'number_direction_disk  		= Evaluate( NameOfUnit+"number_direction_disk")
@@ -371,6 +376,9 @@ optimisation_range       		= Evaluate( NameOfUnit+"optimisation_range")
 
 low_limit = 1.0 - 1*optimisation_range
 top_limit = 1.0 + 1*optimisation_range
+
+
+cable_length 					= Evaluate( NameOfUnit+"cable_length")
 
 '------------Drawing the stricture-----------------
 
@@ -470,7 +478,7 @@ End With
 '     .Create
 'End With
 
-'Vacuum cylinder to subtrack
+'connector
 With Cylinder
      .Reset
      .Name "vacuum_connector_subtrack"
@@ -495,7 +503,23 @@ With Cylinder
      .OuterRadius Evaluate(NameOfUnit+"connector_inner_diameter")/2
      .InnerRadius 0
      .Axis "z"
-     .Zrange -disk_metallization_thickness/2, main_line_disks_distance+disk_metallization_thickness/2
+     .Zrange -disk_metallization_thickness/2-cable_length, main_line_disks_distance+disk_metallization_thickness/2
+     .Xcenter "0"
+     .Ycenter port_connection_offset
+     .Segments "0"
+     .Create
+End With
+
+'cable ground
+With Cylinder
+     .Reset
+     .Name "Cable_ground"
+     .Component "Antenna_Structure_"+CStr(name_number)
+     .Material "PEC"
+     .OuterRadius Evaluate(NameOfUnit+"connector_outer_diameter")/2+disk_metallization_thickness
+     .InnerRadius Evaluate(NameOfUnit+"connector_outer_diameter")/2
+     .Axis "z"
+     .Zrange -disk_metallization_thickness/2-cable_length, disk_metallization_thickness/2
      .Xcenter "0"
      .Ycenter port_connection_offset
      .Segments "0"
@@ -601,6 +625,7 @@ Solid.Subtract "Antenna_Structure_"+CStr(name_number)+":Nut_main", "Antenna_Stru
 Solid.Add "Antenna_Structure_"+CStr(name_number)+":Main_disk", "Antenna_Structure_"+CStr(name_number)+":Nut_main"
 Solid.Add "Antenna_Structure_"+CStr(name_number)+":Main_disk", "Antenna_Structure_"+CStr(name_number)+":connector_pipe"
 Solid.Add "Antenna_Structure_"+CStr(name_number)+":Main_disk", "Antenna_Structure_"+CStr(name_number)+":Central_pipe"
+Solid.Add "Antenna_Structure_"+CStr(name_number)+":Main_disk", "Antenna_Structure_"+CStr(name_number)+":Cable_ground"
 
 'renaming the structure
 Solid.Rename "Antenna_Structure_"+CStr(name_number)+":Main_disk","Metallic_Structure"
@@ -638,8 +663,8 @@ With Port
      .Orientation "zmin"
      .PortOnBound "True"
      .ClipPickedPortToBound "False"
-     .Xrange -Evaluate(NameOfUnit+"connector_outer_diameter")/2, Evaluate(NameOfUnit+"connector_outer_diameter")/2
-     .Yrange port_connection_offset-Evaluate(NameOfUnit+"connector_outer_diameter")/2, port_connection_offset+Evaluate(NameOfUnit+"connector_outer_diameter")/2
+     .Xrange -Evaluate(NameOfUnit+"connector_outer_diameter")/2-disk_metallization_thickness, Evaluate(NameOfUnit+"connector_outer_diameter")/2+disk_metallization_thickness
+     .Yrange port_connection_offset-Evaluate(NameOfUnit+"connector_outer_diameter")/2-disk_metallization_thickness, port_connection_offset+Evaluate(NameOfUnit+"connector_outer_diameter")/2+disk_metallization_thickness
      .Zrange -disk_metallization_thickness/2, -disk_metallization_thickness/2
      .XrangeAdd "0.0", "0.0"
      .YrangeAdd "0.0", "0.0"

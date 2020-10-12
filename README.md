@@ -24,9 +24,11 @@ The S11 of the antenna was measured on the Rohde & Schwarz VNA.
 
 ## Modeling in CST
 
-For the convinient modeling and repeatability the design was combined into a macros with VBA language.
+For the convinient modeling and repeatability the design was combined into a macros with VBA language - wi_fi_gun.mcs.
+(wi_fi_gun_cable.mcs is updated version and includes the piece of the coaxial cable to the antenna. Such moek gives a more correct farfield)
 Macros construct the antenna design and also define optimisation goal (explained below).
-All published cst models use the developped macros. Only the geomertic parameters vary for different models.  
+All published cst models use the developped macros. Only the geomertic parameters vary for different models.
+
 To make macros available in CST put in into:
 [CST folder]/Library/Macros/Construct/[create some folder]/
 
@@ -74,5 +76,10 @@ Some improvements in optimiser allowed to find better parameters. S11 characteri
 Achieved in 2 optimisation steps( first with 2.5 GHz center frequency, next with the 2.6 GHz center frequency) from the wi-fi optimized gun as initialization. 
 ![S11](/data/images/S11_CST_Re_Im_2.5-2.7_optimisation.png)
 
-#TODO:
-Table with the dimentions.
+#### Optimisation for 1.9-2.2 GHz(out Wi-Fi scopes and covers the entire 3G) 
+![S11](/data/images/S11_CST_Re_Im_1.9-2.2_optimisation.png)
+
+# TODO:
+- Table with the dimentions.
+- Real report of wi-fi capture.
+- Optimized wi-fi antenna assembly and measurements.
